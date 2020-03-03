@@ -7,8 +7,9 @@
 //
 
 import UIKit
-
+//Declaring a protocol  :class allowing it to use class level objects
 protocol EntryTableViewCellDelegate: class {
+    //Creating a task that the boss(tableViewCell), gave our Intern delegate, tableViewController)
     func switchToggledOnCell(cell: EntryTableViewCell)
 }
 
@@ -20,6 +21,8 @@ class EntryTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     var entry: Entry?
+   
+    //Delegate our runner 
     weak var delegate: EntryTableViewCellDelegate?
     // MARK: - Helper Functions
     func setEntry(entry: Entry, averageHappiness: Int) {
@@ -27,7 +30,7 @@ class EntryTableViewCell: UITableViewCell {
         updateUI(averageHappiness: averageHappiness)
     }
     
-   @objc func updateUI(averageHappiness: Int) {
+    func updateUI(averageHappiness: Int) {
         guard let entry = entry else {return}
         titleLable.text = entry.title
         isEnabled.isOn = entry.isIncluded
@@ -36,10 +39,17 @@ class EntryTableViewCell: UITableViewCell {
     }
     
      func createObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(updateUI), name: notificationKey, object: nil)
+        //Creating our person who will listen for our notification, then call recalculate happiness
+        NotificationCenter.default.addObserver(self, selector: #selector(recalculateHappiness), name: notificationKey, object: nil)
+    }
+    
+    @objc func recalculateHappiness(notification: NSNotification) {
+        guard let averageHappiness = notification.object as? Int else {return}
+        updateUI(averageHappiness: averageHappiness)
     }
     
     @IBAction func toggledIsIncluded(_ sender: Any) {
+       //Telling our runner to go tell our intern to do something
         delegate?.switchToggledOnCell(cell: self)
     }
     
