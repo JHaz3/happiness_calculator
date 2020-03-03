@@ -8,9 +8,16 @@
 
 import UIKit
 
+let notificationKey = Notification.Name(rawValue: "didChangeHappiness")
+
 class EntryListTableViewController: UITableViewController {
     
-    var averageHappiness: Int = 0
+    var averageHappiness: Int = 0 {
+        //property Observer it is observing this property and it will fire when its property gets set
+        didSet {
+            NotificationCenter.default.post(name: notificationKey, object: self.averageHappiness)
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
